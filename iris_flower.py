@@ -16,27 +16,37 @@ def add_video_bg_and_fix_layout():
     st.markdown(
         f"""
         <style>
-        /* This makes the video fit the screen */
+        /* --- Video Background --- */
         #myVideo {{
             position: fixed;
             right: 0;
             bottom: 0;
-            min-width: 100%;
-            min-height: 100%;
-            object-fit: cover; /* Ensures video covers the screen without distortion */
-            z-index: -1;
+            min-width: 100vw;
+            min-height: 100vh;
+            width: auto;
+            height: auto;
+            object-fit: cover;
+            z-index: -1000; /* Push it way, way back */
         }}
 
-        /* This adds a semi-transparent overlay to the main content area */
+        /* --- Fallback Background --- */
+        /* Add a black background to the app to prevent a white flash before the video loads */
+        .stApp {{
+            background-color: #000000;
+        }}
+
+        /* --- Main Content Area Styling --- */
         .main {{
-            background-color: rgba(0, 0, 0, 0.5); /* Black with 50% opacity */
+            background-color: rgba(10, 10, 25, 0.7); /* Dark blue/purple tint with 70% opacity */
             padding: 2rem;
-            border-radius: 10px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
         }}
 
-        /* This makes the sidebar semi-transparent too */
+        /* --- Sidebar Styling --- */
         [data-testid="stSidebar"] > div:first-child {{
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(10, 10, 25, 0.7); /* Match the main content area */
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
         }}
         </style>
         
