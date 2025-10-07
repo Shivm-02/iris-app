@@ -30,9 +30,9 @@ def add_video_bg_and_fix_layout():
         }}
 
         /* --- Fallback Background --- */
-        /* Add a black background to the app to prevent a white flash before the video loads */
+        /* Set the main app background to transparent to ensure the video is always visible */
         .stApp {{
-            background-color: #000000;
+            background: transparent;
         }}
 
         /* --- Main Content Area Styling --- */
