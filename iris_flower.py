@@ -17,7 +17,7 @@ def add_bg_and_styling():
         f"""
         <style>
         /* --- Google Font Import --- */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         
         /* --- Video Background --- */
         #myVideo {{
@@ -40,17 +40,42 @@ def add_bg_and_styling():
 
         /* --- Glassmorphism Containers --- */
         .main, [data-testid="stSidebar"] > div:first-child {{
-            background-color: rgba(0, 0, 0, 0.55); /* Increased darkness for better contrast */
-            backdrop-filter: blur(10px); /* The frosted glass effect */
+            background-color: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 15px;
+            padding: 2rem;
         }}
 
         /* --- Text Color & Shadow for Readability --- */
         .stApp, .stApp h1, .stApp h2, .stApp h3, .stApp .stMarkdown, .stApp label {{
-            color: #FFFFFF; /* White text */
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Added text shadow for pop */
+            color: #FFFFFF;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }}
+
+        /* --- Animated Gradient Title --- */
+        .animated-gradient-text {{
+            font-weight: 700;
+            background: linear-gradient(to right, #ffafbd, #ffc3a0, #b3e5fc, #a1c4fd);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient_animation 6s ease infinite;
+            background-size: 400% 400%;
+        }}
+
+        @keyframes gradient_animation {{
+            0% {{ background-position: 0% 50%; }}
+            50% {{ background-position: 100% 50%; }}
+            100% {{ background-position: 0% 50%; }}
+        }}
+
+        /* --- Button Hover Effect --- */
+        .stButton > button:hover {{
+            transform: scale(1.05);
+            transition: transform 0.2s ease-in-out;
+            box-shadow: 0 0 15px rgba(255, 107, 129, 0.6);
         }}
 
         /* --- Seamless Image Fade-in Animation --- */
@@ -61,8 +86,8 @@ def add_bg_and_styling():
 
         .fade-in-image {{
             animation: fadeIn 0.8s ease-in-out;
-            border-radius: 10px; /* Rounded corners for the image */
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* Subtle shadow */
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }}
         </style>
         
@@ -95,9 +120,18 @@ iris_df['species'] = [iris_dataset.target_names[i] for i in iris_dataset.target]
 # --- App Sidebar ---
 st.sidebar.header("About the App")
 st.sidebar.info("This app predicts Iris flower species using a KNN model and visualizes the dataset.")
+st.sidebar.markdown("---")
+st.sidebar.markdown("""
+<div style="text-align: left;">
+    <strong>Shivam Pagar</strong><br>
+    <small>Yash Kharat</small><br>
+    <small>Yash Deokar</small>
+</div>
+""", unsafe_allow_html=True)
+
 
 # --- Main App Interface ---
-st.title("Iris Flower Species Predictor")
+st.markdown('<h1 class="animated-gradient-text">Iris Flower Species Predictor</h1>', unsafe_allow_html=True)
 
 tab1, tab2 = st.tabs(["📊 Predict Species", "📈 Data Explorer"])
 
@@ -122,7 +156,6 @@ with tab1:
         confidence = np.max(prediction_proba) * 100
         st.info(f"Confidence Score: {confidence:.2f}%")
         
-        # --- Using Markdown for Animated Image ---
         image_url = ""
         if predicted_species_name == 'setosa':
             image_url = "https://upload.wikimedia.org/wikipedia/commons/5/56/Kosaciec_szczecinkowaty_Iris_setosa.jpg"
@@ -131,7 +164,6 @@ with tab1:
         else:
             image_url = "https://upload.wikimedia.org/wikipedia/commons/9/9f/Iris_virginica.jpg"
         
-        # Display the image with the fade-in class and constrained size
         st.markdown(f'<img src="{image_url}" class="fade-in-image" style="max-width: 500px; display: block; margin-left: auto; margin-right: auto;">', unsafe_allow_html=True)
 
         st.session_state['new_flower_data'] = {
