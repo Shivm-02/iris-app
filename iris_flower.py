@@ -11,11 +11,14 @@ st.set_page_config(
     layout="wide"
 )
 
-# --- Function to add a background video and fix layout ---
-def add_video_bg_and_fix_layout():
+# --- Function to add a background video and all UI styling ---
+def add_bg_and_styling():
     st.markdown(
         f"""
         <style>
+        /* --- Google Font Import --- */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+        
         /* --- Video Background --- */
         #myVideo {{
             position: fixed;
@@ -26,39 +29,51 @@ def add_video_bg_and_fix_layout():
             width: auto;
             height: auto;
             object-fit: cover;
-            z-index: -1000; /* Push it way, way back */
+            z-index: -1000;
         }}
 
-        /* --- Fallback Background --- */
-        /* Set the main app background to transparent to ensure the video is always visible */
+        /* --- Main App Styling --- */
         .stApp {{
             background: transparent;
+            font-family: 'Inter', sans-serif;
         }}
 
-        /* --- Main Content Area Styling --- */
-        .main {{
-            background-color: rgba(10, 10, 25, 0.7); /* Dark blue/purple tint with 70% opacity */
-            padding: 2rem;
+        /* --- Glassmorphism Containers --- */
+        .main, [data-testid="stSidebar"] > div:first-child {{
+            background-color: rgba(255, 255, 255, 0.15); /* Light, semi-transparent background */
+            backdrop-filter: blur(10px); /* The frosted glass effect */
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
         }}
 
-        /* --- Sidebar Styling --- */
-        [data-testid="stSidebar"] > div:first-child {{
-            background-color: rgba(10, 10, 25, 0.7); /* Match the main content area */
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        /* --- Text Color for Readability --- */
+        .stApp, .stApp h1, .stApp h2, .stApp h3 {{
+            color: #262730; /* Darker text for light backgrounds */
+        }}
+
+        /* --- Seamless Image Fade-in Animation --- */
+        @keyframes fadeIn {{
+            0% {{ opacity: 0; transform: scale(0.95); }}
+            100% {{ opacity: 1; transform: scale(1); }}
+        }}
+
+        .fade-in-image {{
+            animation: fadeIn 0.8s ease-in-out;
+            border-radius: 10px; /* Rounded corners for the image */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Subtle shadow */
         }}
         </style>
         
         <video autoplay loop muted playsinline id="myVideo">
-          <source src="https://github.com/Shivm-02/iris-app/raw/refs/heads/main/grains%20bg.mp4" type="video/mp4">
+          <source src="https://github.com/Shivm-02/iris-app/raw/refs/heads/main/dg%20bg%20final.mp4" type="video/mp4">
         </video>
         """,
         unsafe_allow_html=True
     )
 
-# --- Call the function to set the background ---
-add_video_bg_and_fix_layout()
+# --- Call the function to set the background and styles ---
+add_bg_and_styling()
 
 # --- Model Training ---
 @st.cache_data
@@ -72,7 +87,7 @@ def train_model():
 
 model, iris_dataset = train_model()
 
-# --- Load Data into a Pandas DataFrame for Charting ---
+# --- Load Data into a Pandas DataFrame ---
 iris_df = pd.DataFrame(data=iris_dataset.data, columns=iris_dataset.feature_names)
 iris_df['species'] = [iris_dataset.target_names[i] for i in iris_dataset.target]
 
@@ -106,13 +121,17 @@ with tab1:
         confidence = np.max(prediction_proba) * 100
         st.info(f"Confidence Score: {confidence:.2f}%")
         
-        # --- THIS IS THE RESTORED IMAGE GENERATION ---
+        # --- Using Markdown for Animated Image ---
+        image_url = ""
         if predicted_species_name == 'setosa':
-            st.image("https://upload.wikimedia.org/wikipedia/commons/5/56/Kosaciec_szczecinkowaty_Iris_setosa.jpg", caption="Iris Setosa")
+            image_url = "https://upload.wikimedia.org/wikipedia/commons/5/56/Kosaciec_szczecinkowaty_Iris_setosa.jpg"
         elif predicted_species_name == 'versicolor':
-            st.image("https://upload.wikimedia.org/wikipedia/commons/4/41/Iris_versicolor_3.jpg", caption="Iris Versicolor")
+            image_url = "https://upload.wikimedia.org/wikipedia/commons/4/41/Iris_versicolor_3.jpg"
         else:
-            st.image("https://upload.wikimedia.org/wikipedia/commons/9/9f/Iris_virginica.jpg", caption="Iris Virginica")
+            image_url = "https://upload.wikimedia.org/wikipedia/commons/9/9f/Iris_virginica.jpg"
+        
+        # Display the image with the fade-in class
+        st.markdown(f'<img src="{image_url}" class="fade-in-image" width="100%">', unsafe_allow_html=True)
 
         st.session_state['new_flower_data'] = {
             'sepal length (cm)': sepal_l, 'sepal width (cm)': sepal_w,
