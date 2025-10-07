@@ -2,44 +2,55 @@ import streamlit as st
 import pandas as pd
 from sklearn.datasets import load_iris
 from sklearn.neighbors import KNeighborsClassifier
+import numpy as np
 
-# --- Page Configuration (must be the first Streamlit command) ---
+# --- Page Configuration ---
 st.set_page_config(
     page_title="Iris Flower Predictor",
     page_icon="🌸",
     layout="wide"
 )
 
-# --- Function to add your custom background video ---
-def add_video_bg():
+# --- Function to add a background video and fix layout ---
+def add_video_bg_and_fix_layout():
     st.markdown(
         f"""
         <style>
-        .stApp {{
-            background: none; /* Hide the default background */
-        }}
-
+        /* This makes the video fit the screen */
         #myVideo {{
             position: fixed;
             right: 0;
             bottom: 0;
             min-width: 100%;
             min-height: 100%;
-            z-index: -1; /* Send it to the back */
+            object-fit: cover; /* Ensures video covers the screen without distortion */
+            z-index: -1;
+        }}
+
+        /* This adds a semi-transparent overlay to the main content area */
+        .main {{
+            background-color: rgba(0, 0, 0, 0.5); /* Black with 50% opacity */
+            padding: 2rem;
+            border-radius: 10px;
+        }}
+
+        /* This makes the sidebar semi-transparent too */
+        [data-testid="stSidebar"] > div:first-child {{
+            background-color: rgba(0, 0, 0, 0.5);
         }}
         </style>
         
         <video autoplay loop muted playsinline id="myVideo">
-          <source src="https://github.com/Shivm-02/iris-app/raw/refs/heads/main/dancing%20lights.mp4" type="video/mp4">
+          <source src="https://github.com/Shivm-02/iris-app/raw/refs/heads/main/grains%20bg.mp4" type="video/mp4">
         </video>
         """,
         unsafe_allow_html=True
     )
 
 # --- Call the function to set the background ---
-add_video_bg()
+add_video_bg_and_fix_layout()
 
-# --- Model Training (cached so it only runs once) ---
+# --- Model Training ---
 @st.cache_data
 def train_model():
     iris_dataset = load_iris()
@@ -58,7 +69,6 @@ iris_df['species'] = [iris_dataset.target_names[i] for i in iris_dataset.target]
 # --- App Sidebar ---
 st.sidebar.header("About the App")
 st.sidebar.info("This app predicts Iris flower species using a KNN model and visualizes the dataset.")
-st.sidebar.markdown("[View the Iris Dataset on Wikipedia](https://en.wikipedia.org/wiki/Iris_flower_data_set)")
 
 # --- Main App Interface ---
 st.title("Iris Flower Species Predictor")
@@ -78,11 +88,22 @@ with tab1:
     if st.button("Predict", type="primary"):
         new_flower = [[sepal_l, sepal_w, petal_l, petal_w]]
         prediction = model.predict(new_flower)
+        prediction_proba = model.predict_proba(new_flower)
         predicted_species_name = iris_dataset.target_names[prediction[0]]
         
         st.success(f"Predicted Species: **{predicted_species_name.upper()}**")
-        st.balloons()
         
+        confidence = np.max(prediction_proba) * 100
+        st.info(f"Confidence Score: {confidence:.2f}%")
+        
+        # --- THIS IS THE RESTORED IMAGE GENERATION ---
+        if predicted_species_name == 'setosa':
+            st.image("https://upload.wikimedia.org/wikipedia/commons/5/56/Kosaciec_szczecinkowaty_Iris_setosa.jpg", caption="Iris Setosa")
+        elif predicted_species_name == 'versicolor':
+            st.image("https://upload.wikimedia.org/wikipedia/commons/4/41/Iris_versicolor_3.jpg", caption="Iris Versicolor")
+        else:
+            st.image("https://upload.wikimedia.org/wikipedia/commons/9/9f/Iris_virginica.jpg", caption="Iris Virginica")
+
         st.session_state['new_flower_data'] = {
             'sepal length (cm)': sepal_l, 'sepal width (cm)': sepal_w,
             'petal length (cm)': petal_l, 'petal width (cm)': petal_w,
@@ -98,3 +119,4 @@ with tab2:
         chart_data = pd.concat([chart_data, new_point], ignore_index=True)
 
     st.scatter_chart(chart_data, x='sepal length (cm)', y='sepal width (cm)', color='species', size='petal length (cm)')
+
