@@ -40,16 +40,17 @@ def add_bg_and_styling():
 
         /* --- Glassmorphism Containers --- */
         .main, [data-testid="stSidebar"] > div:first-child {{
-            background-color: rgba(0, 0, 0, 0.3); /* Darker semi-transparent background for contrast */
+            background-color: rgba(0, 0, 0, 0.55); /* Increased darkness for better contrast */
             backdrop-filter: blur(10px); /* The frosted glass effect */
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 15px;
         }}
 
-        /* --- Text Color for Readability --- */
+        /* --- Text Color & Shadow for Readability --- */
         .stApp, .stApp h1, .stApp h2, .stApp h3, .stApp .stMarkdown, .stApp label {{
-            color: #FFFFFF; /* White text for dark backgrounds */
+            color: #FFFFFF; /* White text */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Added text shadow for pop */
         }}
 
         /* --- Seamless Image Fade-in Animation --- */
