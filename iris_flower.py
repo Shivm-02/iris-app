@@ -40,7 +40,7 @@ def add_bg_and_styling():
 
         /* --- Glassmorphism Containers --- */
         .main, [data-testid="stSidebar"] > div:first-child {{
-            background-color: rgba(255, 255, 255, 0.15); /* Light, semi-transparent background */
+            background-color: rgba(0, 0, 0, 0.3); /* Darker semi-transparent background for contrast */
             backdrop-filter: blur(10px); /* The frosted glass effect */
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -48,8 +48,8 @@ def add_bg_and_styling():
         }}
 
         /* --- Text Color for Readability --- */
-        .stApp, .stApp h1, .stApp h2, .stApp h3 {{
-            color: #262730; /* Darker text for light backgrounds */
+        .stApp, .stApp h1, .stApp h2, .stApp h3, .stApp .stMarkdown, .stApp label {{
+            color: #FFFFFF; /* White text for dark backgrounds */
         }}
 
         /* --- Seamless Image Fade-in Animation --- */
@@ -61,7 +61,7 @@ def add_bg_and_styling():
         .fade-in-image {{
             animation: fadeIn 0.8s ease-in-out;
             border-radius: 10px; /* Rounded corners for the image */
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Subtle shadow */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* Subtle shadow */
         }}
         </style>
         
@@ -130,8 +130,8 @@ with tab1:
         else:
             image_url = "https://upload.wikimedia.org/wikipedia/commons/9/9f/Iris_virginica.jpg"
         
-        # Display the image with the fade-in class
-        st.markdown(f'<img src="{image_url}" class="fade-in-image" width="100%">', unsafe_allow_html=True)
+        # Display the image with the fade-in class and constrained size
+        st.markdown(f'<img src="{image_url}" class="fade-in-image" style="max-width: 500px; display: block; margin-left: auto; margin-right: auto;">', unsafe_allow_html=True)
 
         st.session_state['new_flower_data'] = {
             'sepal length (cm)': sepal_l, 'sepal width (cm)': sepal_w,
